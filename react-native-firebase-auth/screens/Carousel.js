@@ -1,40 +1,32 @@
 import { useNavigation } from "@react-navigation/native";
-import { AirbnbRating, Icon } from "@rneui/themed";
-import { collection, getDocs } from "firebase/firestore";
+import { AirbnbRating } from "@rneui/themed";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  TouchableWithoutFeedback,
+  Dimensions, ScrollView, StyleSheet,
+  Text, TouchableOpacity, View
 } from "react-native";
 import { Card } from "react-native-paper";
 import SwiperFlatList from "react-native-swiper-flatlist";
+
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Favourite from "../components/Favourite";
-import { db } from "../firebase.config";
+import cardService from "../services/cardsServices";
 
 const { width } = Dimensions.get("window");
 
 
 
 function Carousel() {
-  const dataBase = collection(db, "cards");
 
   const [cardData, setCardData] = useState([]);
-  const [fav, setFav] = useState(false);
   const navigation = useNavigation();
 
   const loadData = async () => {
-    const querySnapshot = await getDocs(dataBase);
+    const querySnapshot = await cardService.getCards();
     let temp = [];
-    querySnapshot.forEach((doc) => {
+    querySnapshot.data.forEach((doc) => {
       temp.push({
-        swipData: doc.data(),
-        cardId: doc.id,
+        swipData: doc
       });
     });
     setCardData(temp);
@@ -67,7 +59,7 @@ function Carousel() {
                     <Card.Cover
                       style={styles.cardImage}
                       source={{
-                        uri: item.swipData["image"],
+                        uri: item.swipData.elements.image,
                       }}
                     />
                     <View style={styles.heart}> 
@@ -75,15 +67,15 @@ function Carousel() {
                     </View>
                     </View>
                     <View style={styles.cardBody}>
-                      <Text style={styles.text}>{item.swipData["title"]} </Text>
+                      <Text style={styles.text}>{item.swipData.elements.title} </Text>
                       <View style={styles.rating}>
                         <Text style={styles.location}>
                           <Icon
-                            name="location-pin"
-                            type="antDesign"
+                            name="map-marker-outline"
+                            
                             size={20}
                           />
-                          {item.swipData["location"]}
+                          {item.swipData.elements.location}
                         </Text>
                         <AirbnbRating
                           size={20}
@@ -97,7 +89,7 @@ function Carousel() {
                       </View>
                       <View style={styles.cardButton}>
                         <Text style={styles.price}>
-                          $ {item.swipData["price"]}{" "}
+                          $ {item.swipData.elements.price}
                           <Text style={{ color: "#6C6D68" }}>/day</Text>
                         </Text>
                         <TouchableOpacity style={{ marginTop: 20 }} 
@@ -147,6 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 18,
     letterSpacing: -1,
+    paddingVertical:5
   },
   price: {
     fontSize: 16,
