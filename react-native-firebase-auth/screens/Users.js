@@ -1,28 +1,21 @@
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  Modal,
-  Alert,
-  Image
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
   getDocs,
-  updateDoc,
+  updateDoc
 } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import {
+  Alert, FlatList,
+  Modal, StyleSheet, Text,
+  TextInput, TouchableOpacity, View
+} from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { db, auth } from "../firebase.config";
+import { db } from "../firebase.config";
 import Loader from "./Loader";
-import { useNavigation } from "@react-navigation/native";
 
 const Users = () => {
   const [name, setName] = useState("");
