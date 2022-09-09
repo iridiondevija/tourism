@@ -1,8 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import axios from "axios";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import cardService from "../services/cardsServices";
 
-const API_URL = "http://localhost:8080/api/cards/read";
+
+// const API_URL = "http://10.0.2.2:8080/api/packages/read";
 
 const config = {
 	provider:  null,
@@ -13,36 +14,33 @@ const config = {
 	'Expires': 0,
 	'Accept': 'application/json',
 };
-
-
-// axios.get(API_URL, {
-    
-// })
-//     .then(function (response) {
-//         console.log(response);
-//     })
-//     .catch(function (error) {
-//         console.log(error);
-//     })
-//     .then(function () {
-//         // always executed
-//     });  
+ 
 
 const Testing = () => {
 
-    const getData = async () => {
-        const response = await axios.get(API_URL, config);
-         //const response = await fetch(API_URL);
-        const data = await response.json();
-        console.warn(response)
-        console.warn(data)
-        return response;
+    // const getData = async () => {
+    //     const response = await axios.get(API_URL, config)
+    //     .then((response)=>{
+    //           console.warn(response.data)
+    //         }).catch((error)=>{
+    //           console.warn(error)
+    //         })
+    //     return response;
 
-      };
+    //   };
+
+    // const getData = () =>{
+    //   axios.get("http://10.0.2.2:8080/api/packages/read")
+    //   .then((response)=>{
+    //     console.warn(response.data)
+    //   }).catch((error)=>{
+    //     console.warn(error)
+    //   })
+    // }
 
   return (
     <View>
-      <TouchableOpacity onPress={()=> getData()}>
+      <TouchableOpacity onPress={()=> cardService.getCards()}>
         <Text>Testing</Text>
       </TouchableOpacity>
     </View>
