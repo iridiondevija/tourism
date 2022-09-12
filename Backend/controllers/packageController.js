@@ -14,8 +14,9 @@ const createPackage = async (req, res) => {
       location: req.body.location,
       price: req.body.price,
       title: req.body.title,
+      rating: req.body.rating,
     };
-    const response = await db.collection("packages").add(userJson);
+    const response = await db.collection("cards").add(userJson);
     res.send(response);
   } catch (error) {
     res.send(error);
@@ -27,11 +28,14 @@ const createPackage = async (req, res) => {
 // @access  Private
 const readPackage = async (req, res) => {
   try {
-    const usersRef = await db.collection("packages");
+    const usersRef = await db.collection("cards");
     const response = await usersRef.get();
     let responseArr = [];
     response.forEach((doc) => {
-      responseArr.push(doc.data());
+      responseArr.push({
+        elements: doc.data(),
+        elementId: doc.id
+      });
     });
     res.send(responseArr);
   } catch (error) {

@@ -29,7 +29,7 @@ function Carousel() {
         swipData: doc
       });
     });
-    setCardData(temp);
+   setCardData(temp);
   };
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function Carousel() {
       <ScrollView>
         <View style={styles.container}>
           {cardData && cardData.length > 0 ? (
-            <SwiperFlatList
+            <SwiperFlatList 
               scrollEnabled={true}
               // showPagination
               // paginationActiveColor="#1061cc"
@@ -77,7 +77,8 @@ function Carousel() {
                           />
                           {item.swipData.elements.location}
                         </Text>
-                        <AirbnbRating
+                        <AirbnbRating 
+                        count={item.swipData.elements.rating}
                           size={20}
                           showRating={false}
                           selectedColor="#FFE27D"
@@ -85,6 +86,7 @@ function Carousel() {
                           shadowColor="red"
                           isDisabled={true}
                           reviewColor="red"
+                          {...console.warn(item.swipData.elements.rating)}
                         />
                       </View>
                       <View style={styles.cardButton}>

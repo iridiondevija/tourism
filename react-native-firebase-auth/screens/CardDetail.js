@@ -2,19 +2,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  Easing,
-  ScrollView,
-  StyleSheet,
+  Easing, StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { Card } from "react-native-paper";
 import Favourite from "../components/Favourite";
 
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import SwiperFlatList from "react-native-swiper-flatlist";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const { width, height } = Dimensions.get("window");
 const NUM_OF_LINES = 4;
@@ -22,8 +20,7 @@ const NUM_OF_LINES = 4;
 function CardDetail({ route, navigation }) {
   const { item } = route.params;
 
-  const { price, image, title, location, description, images } = item.swipData;
-  const [fav, setFav] = useState(false);
+  const { price, image, title, location, description, images } = item.swipData.elements;
   const [expanded, setExpanded] = useState(false);
   const animationHeight = useRef(new Animated.Value(2)).current;
   const [numOfLines, setNumOfLines] = useState(NUM_OF_LINES);
@@ -63,6 +60,7 @@ function CardDetail({ route, navigation }) {
           <View style={styles.oneCard}>
             <View style={{ position: "relative" }}>
               <SwiperFlatList
+                paginationStyleItem={{ width:7, height:7, borderRadius:5, marginTop:9 }}
                 paginationActiveColor="#FFFFFF"
                 scrollEnabled={true}
                 showPagination

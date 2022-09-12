@@ -42,7 +42,7 @@ admin.initializeApp({
 //   }
 // });
 
-app.use("/api/packages", require("./routes/packageRoute"));
+app.use("/api/cards", require("./routes/packageRoute"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
