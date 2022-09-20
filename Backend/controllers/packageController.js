@@ -1,46 +1,56 @@
-const admin = require("firebase-admin");
+const asyncHandler = require("express-async-handler");
 
-const db = admin.firestore();
+const Package = require("../model/packageModel");
 
-// @desc    Create a package
-// @route   POST /api/users/login
-// @access  Public
-const createPackage = async (req, res) => {
-  try {
-    const userJson = {
-      description:req.body.description,
-      image: req.body.image,
-      images: req.body.images,
-      location: req.body.location,
-      price: req.body.price,
-      title: req.body.title,
-      rating: req.body.rating,
-    };
-    const response = await db.collection("cards").add(userJson);
-    res.send(response);
-  } catch (error) {
-    res.send(error);
+const getPackages = asyncHandler(async (req, res) => {
+  const package = await Package.find();
+  res.status(200).json(package);
+});
+
+const createPackages = asyncHandler(async (req, res) => {
+  if (!req.body.title) {
+    res.status(400);
+    throw new Error("Please add a title field");
   }
-};
 
-// @desc    Get packages data
-// @route   GET /api/packages/read
-// @access  Private
-const readPackage = async (req, res) => {
-  try {
-    const usersRef = await db.collection("cards");
-    const response = await usersRef.get();
-    let responseArr = [];
-    response.forEach((doc) => {
-      responseArr.push({
-        elements: doc.data(),
-        elementId: doc.id
-      });
-    });
-    res.send(responseArr);
-  } catch (error) {
-    res.send(error);
+  const packageCreation = await Package.create({
+    description: req.body.description,
+    image: req.body.image,
+    images: req.body.images,
+    price: req.body.price,
+    title: req.body.title,
+    location:  req.body.location,
+    duration: req.body.duration,
+    rating: req.body.rating
+  });
+  res.status(200).json(packageCreation);
+});
+
+const updateackages = asyncHandler(async (req, res) => {
+  const package = await Package.findById(req.params.id);
+  console.log("second", package)
+
+  if(!package){
+    res.status(400)
+    throw new Error('Package not found')
   }
-};
+  const updatedPackage = await Package.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  res.status(200).json(updatedPackage);
+});
 
-module.exports = { createPackage, readPackage };
+const deletePackages = asyncHandler(async (req, res) => {
+    const package = await Package.findById(req.params.id);
+
+  if(!package){
+    res.status(400)
+    throw new Error('Package not found')
+  }
+    await package.remove();
+  res.status(200).json("package Deleted Successfully");
+});
+
+module.exports = { getPackages, createPackages, updateackages, deletePackages };

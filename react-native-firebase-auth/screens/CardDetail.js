@@ -2,17 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  Easing, StyleSheet,
+  Easing,
+  FlatList,
+  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
 import { Card } from "react-native-paper";
 import Favourite from "../components/Favourite";
-
-import SwiperFlatList from "react-native-swiper-flatlist";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import ContainerView from "../container/ContainerView";
 
 const { width, height } = Dimensions.get("window");
 const NUM_OF_LINES = 4;
@@ -20,12 +21,18 @@ const NUM_OF_LINES = 4;
 function CardDetail({ route, navigation }) {
   const { item } = route.params;
 
-  const { price, image, title, location, description, images } = item.swipData.elements;
+  const {
+    price,
+    title,
+    description,
+    images,
+    rating,
+    duration,
+  } = item;
   const [expanded, setExpanded] = useState(false);
   const animationHeight = useRef(new Animated.Value(2)).current;
   const [numOfLines, setNumOfLines] = useState(NUM_OF_LINES);
   const [hasMore, setHasMore] = useState(false);
-
   const onTextLayout = useCallback((e) => {
     setHasMore(e.nativeEvent.lines.length > NUM_OF_LINES);
     setNumOfLines(e.nativeEvent.lines.length);
@@ -34,6 +41,8 @@ function CardDetail({ route, navigation }) {
   const toggleExpansion = () => {
     setExpanded(!expanded);
   };
+
+  console.log("pero", item)
 
   useEffect(() => {
     if (expanded) {
@@ -55,14 +64,16 @@ function CardDetail({ route, navigation }) {
 
   return (
     <>
-      <View style={styles.container}>
+      <ContainerView>
         <Card style={styles.card}>
           <View style={styles.oneCard}>
             <View style={{ position: "relative" }}>
-              <SwiperFlatList
-                paginationStyleItem={{ width:7, height:7, borderRadius:5, marginTop:9 }}
-                paginationActiveColor="#FFFFFF"
-                scrollEnabled={true}
+              <FlatList
+                indicatorStyle="white"
+                howsHorizontalScrollIndicator={false}
+                pagingEnabled={true}
+                horizontal={true}
+                // scrollEnabled={true}
                 showPagination
                 data={images}
                 renderItem={({ item }) => (
@@ -73,7 +84,7 @@ function CardDetail({ route, navigation }) {
                     }}
                   />
                 )}
-              ></SwiperFlatList>
+              ></FlatList>
               <TouchableOpacity
                 style={styles.backIcon}
                 onPress={() => navigation.goBack()}
@@ -95,7 +106,7 @@ function CardDetail({ route, navigation }) {
                 </View>
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.cardRating}>Duration</Text>
-                  <Text style={styles.cardRatingText}>5 Days</Text>
+                  <Text style={styles.cardRatingText}>{duration} Days</Text>
                 </View>
               </View>
               <View style={styles.cardReviewItems}>
@@ -105,7 +116,7 @@ function CardDetail({ route, navigation }) {
 
                 <View style={{ flexDirection: "column" }}>
                   <Text style={styles.cardRating}>Rating</Text>
-                  <Text style={styles.cardRatingText}>4.8 out of 5</Text>
+                  <Text style={styles.cardRatingText}>{rating} out of 5</Text>
                 </View>
               </View>
             </View>
@@ -173,18 +184,20 @@ function CardDetail({ route, navigation }) {
               </View>
               <TouchableOpacity
                 style={styles.cardPrenotationContentPriceButton}
-                onPress={() => {}}
+                onPress={() => {
+                  navigation.navigate("Availabilty", { item: item });
+                }}
               >
                 <View style={styles.cardBookButton}>
                   <Text
                     style={{
                       color: "#FFFFFF",
-                      fontWeight: "700",
+                      fontWeight: "400",
                       fontSize: 16,
                       lineHeight: 20,
                     }}
                   >
-                    Book Now
+                    See Availability
                   </Text>
                   <Icon
                     name="arrow-right"
@@ -196,7 +209,7 @@ function CardDetail({ route, navigation }) {
             </View>
           </View>
         </Card>
-      </View>
+      </ContainerView>
     </>
   );
 }
@@ -219,10 +232,9 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: 30,
-    borderRadius: 32,
-    width: 375,
+    borderRadius: 25,
     display: "flex",
-    flex: 1,
+    flex: 1
   },
   cardCover: {
     borderRadius: 20,
@@ -230,17 +242,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 20,
     marginRight: 20,
-    width: 335,
+    width: 342,
   },
   oneCard: {
     flex: 0.85,
   },
   twoCard: {
     flex: 0.1,
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
   },
   backIcon: {
     width: 40,

@@ -1,52 +1,199 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import cardService from "../services/cardsServices";
+import React, { useState } from "react";
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  createPackage,
+  deletePackage,
+  getCardsList,
+  updatePackage,
+} from "../reducers/cardSlice";
 
-
-// const API_URL = "http://10.0.2.2:8080/api/packages/read";
-
-const config = {
-	provider:  null,
-	token: null,
-	'Content-Type': 'application/x-www-form-urlencoded',
-	'Cache-Control': 'no-cache, no-store, must-revalidate',
-	'Pragma': 'no-cache',
-	'Expires': 0,
-	'Accept': 'application/json',
-};
- 
+import { Card } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import SwiperFlatList from "react-native-swiper-flatlist";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { ContainerView } from "../container/ContainerView";
+import Loader from "./Loader";
 
 const Testing = () => {
+  const dispatch = useDispatch();
+  const card = useSelector((state) => state.card);
+  const [showModal, setShowModal] = useState(false);
 
-    // const getData = async () => {
-    //     const response = await axios.get(API_URL, config)
-    //     .then((response)=>{
-    //           console.warn(response.data)
-    //         }).catch((error)=>{
-    //           console.warn(error)
-    //         })
-    //     return response;
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
+  const [singleItem, setSingleItem] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
-    //   };
+  //console.log(card.cards)
 
-    // const getData = () =>{
-    //   axios.get("http://10.0.2.2:8080/api/packages/read")
-    //   .then((response)=>{
-    //     console.warn(response.data)
-    //   }).catch((error)=>{
-    //     console.warn(error)
-    //   })
-    // }
+  const onSubmit = () => {
+    dispatch(createPackage({ title, description, image }));
+    setTitle("");
+    setDescription("");
+    setImage("");
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deletePackage(id));
+    setSingleItem(null);
+  };
+
+  const handleUpdate = (singleItem) => {
+    console.log(singleItem, "per emiljanon");
+    dispatch(updatePackage(singleItem));
+    setSingleItem(null);
+    //dispatch(getCardsList());
+  };
+
+  useEffect(() => {
+    dispatch(getCardsList());
+    setTitle("");
+    setDescription("");
+    setImage("");
+  }, []);
 
   return (
-    <View>
-      <TouchableOpacity onPress={()=> cardService.getCards()}>
-        <Text>Testing</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      <View>
+        <TouchableOpacity onPress={() => setShowModal(true)}>
+          <Text
+            style={{
+              color: "black",
+              backgroundColor: "white",
+              width: 50,
+              height: 40,
+            }}
+          >
+            Create
+          </Text>
+        </TouchableOpacity>
+        {card.loading && <Loader visible={true}>Loading...</Loader>}
+        {card.error && !card.loading ? <Text>{card.error}</Text> : null}
+        {card.cards && card.cards.length > 0 ? (
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            horizontal={false}
+            // showPagination
+            // paginationActiveColor="#1061cc"
+            // paginationStyle={{position:'absolute'}}
+            // paginationStyleItem={{ width:10, height:10, borderRadius:5, marginTop:9 }}
+            data={card.cards}
+            renderItem={({ item }) => (
+              <ScrollView
+                contentContainerStyle={{
+                  alignItems: "center",
+                  margin: 10,
+                  backgroundColor: "white",
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <Text>{item.title}</Text>
+                <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                  <View>
+                    <Icon color="#176FF2" name="delete" size={30} />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowModal(true);
+                    setSingleItem(item._id);
+                    setTitle(item.title);
+                    setDescription(item.description);
+                    setImage(item.image);
+                  }}
+                >
+                  <View>
+                    <Icon color="#176FF2" name="account-edit" size={30} />
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+          />
+        ) : (
+          <Text>No data found...</Text>
+        )}
+        <Modal visible={showModal}>
+          <View
+            style={{
+              paddingVertical: 10,
+              marginHorizontal: 10,
+              alignItems: "center",
+              backgroundColor: "gray",
+            }}
+          >
+            <Pressable onPress={() => setShowModal(!showModal)}>
+              <View
+                style={{
+                  backgroundColor: "gray",
+                  width: 200,
+                  height: 40,
+                  alignItems: "center",
+                }}
+              >
+                <Text>Hide Modal</Text>
+              </View>
+            </Pressable>
+            <TextInput
+              style={styles.formIpunt}
+              onChangeText={(e) => setTitle(e)}
+              value={title}
+              placeholder="Title"
+            />
+            <TextInput
+              style={styles.formIpunt}
+              onChangeText={(e) => setDescription(e)}
+              value={description}
+              placeholder="Description"
+            />
+            <TextInput
+              style={styles.formIpunt}
+              onChangeText={(e) => setImage(e)}
+              value={image}
+              placeholder="Image Url"
+            />
+            <Pressable
+              onPress={() => {
+                singleItem === null
+                  ? onSubmit()
+                  : handleUpdate({
+                      title: title,
+                      description: description,
+                      image: image,
+                      id: singleItem
+                    });
+                setShowModal(!showModal);
+              }}
+            >
+              <Text>Sbumit data</Text>
+            </Pressable>
+          </View>
+        </Modal>
+      </View>
+    </>
   );
 };
 
 export default Testing;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  formIpunt: {
+    backgroundColor: "white",
+    width: 300,
+    height: 40,
+    marginVertical: 20,
+  },
+});

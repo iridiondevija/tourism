@@ -1,132 +1,142 @@
 import { useNavigation } from "@react-navigation/native";
-import { AirbnbRating } from "@rneui/themed";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions, ScrollView, StyleSheet,
-  Text, TouchableOpacity, View
+  Dimensions,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { Card } from "react-native-paper";
-import SwiperFlatList from "react-native-swiper-flatlist";
+import { Rating } from "react-native-ratings";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Favourite from "../components/Favourite";
-import cardService from "../services/cardsServices";
+import { getCardsList } from "../reducers/cardSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ContainerView from "../container/ContainerView";
 
 const { width } = Dimensions.get("window");
 
-
-
 function Carousel() {
-
-  const [cardData, setCardData] = useState([]);
+  const dispatch = useDispatch();
+  const card = useSelector((state) => state.card);
+  //const [cardData, setCardData] = useState([]);
   const navigation = useNavigation();
 
-  const loadData = async () => {
-    const querySnapshot = await cardService.getCards();
-    let temp = [];
-    querySnapshot.data.forEach((doc) => {
-      temp.push({
-        swipData: doc
-      });
-    });
-   setCardData(temp);
-  };
+  // console.log(card.cards[0].period[0])
+  // const loadData = async () => {
+  //   const querySnapshot = await cardService.getCards();
+  //   let temp = [];
+  //   querySnapshot.data.forEach((doc) => {
+  //     temp.push({
+  //       swipData: doc,
+  //     });
+  //   });
+  //   setCardData(temp);
+  // };
+
 
   useEffect(() => {
-    loadData();
+    //loadData();
+    dispatch(getCardsList());
   }, []);
 
   return (
-    <>
-      <ScrollView>
-        <View style={styles.container}>
-          {cardData && cardData.length > 0 ? (
-            <SwiperFlatList 
+        <>
+          {card.cards && card.cards.length > 0 ? (
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled={true}
+              horizontal={true}
               scrollEnabled={true}
               // showPagination
               // paginationActiveColor="#1061cc"
               // paginationStyle={{position:'absolute'}}
               // paginationStyleItem={{ width:10, height:10, borderRadius:5, marginTop:9 }}
-              data={cardData}
-              renderItem={({ item }) => (
-                <View style={styles.child}>
-                  <Card
-                    mode="contained"
-                    style={[styles.cardContent, styles.card]}
-                    onPress={()=>{navigation.navigate("Detail",{item: item})}}
-                  >
-                    <View style={{position: "relative"}}>
-                    <Card.Cover
-                      style={styles.cardImage}
-                      source={{
-                        uri: item.swipData.elements.image,
+              data={card.cards}
+              renderItem={({ item }) =>
+                // item.rating > 1 && (
+                  <ContainerView >
+                    <Card
+                      mode="contained"
+                      style={[styles.cardContent, styles.card]}
+                      onPress={() => {
+                        navigation.navigate("Detail", { item: item });
                       }}
-                    />
-                    <View style={styles.heart}> 
-                    <Favourite />
-                    </View>
-                    </View>
-                    <View style={styles.cardBody}>
-                      <Text style={styles.text}>{item.swipData.elements.title} </Text>
-                      <View style={styles.rating}>
-                        <Text style={styles.location}>
-                          <Icon
-                            name="map-marker-outline"
-                            
-                            size={20}
-                          />
-                          {item.swipData.elements.location}
-                        </Text>
-                        <AirbnbRating 
-                        count={item.swipData.elements.rating}
-                          size={20}
-                          showRating={false}
-                          selectedColor="#FFE27D"
-                          backgroundColor="red"
-                          shadowColor="red"
-                          isDisabled={true}
-                          reviewColor="red"
-                          {...console.warn(item.swipData.elements.rating)}
+                    >
+                      <View style={{ position: "relative" }}>
+                        <Card.Cover
+                          style={styles.cardImage}
+                          source={{
+                            uri: item.image,
+                          }}
                         />
+                        <View style={styles.heart}>
+                          <Favourite />
+                        </View>
                       </View>
-                      <View style={styles.cardButton}>
-                        <Text style={styles.price}>
-                          $ {item.swipData.elements.price}
-                          <Text style={{ color: "#6C6D68" }}>/day</Text>
+                      <View style={styles.cardBody}>
+                        <Text style={styles.text}>
+                          {item.title}{" "}
                         </Text>
-                        <TouchableOpacity style={{ marginTop: 20 }} 
-                        onPress={()=>{navigation.navigate("Detail",{item: item})}}
-                        >
-                          <Text
-                            style={{
-                              fontWeight: "700",
-                              fontSize: 14,
-                              lineHeight: 17,
-                              color: "#176FF2",
+                        <View style={styles.rating}>
+                          <Text style={styles.location}>
+                            <Icon name="map-marker-outline" size={20} />
+                            {item.location}
+                          </Text>
+                          <Rating
+                            startingValue={item.rating}
+                            ratingCount={5}
+                            type="custom"
+                            ratingColor="#FFE27D"
+                            ratingBackgroundColor="#E5E5E5"
+                            imageSize={24}
+                            readonly={true}
+                            tintColor="#FFFF"
+                          />
+                        </View>
+                        <View style={styles.cardButton}>
+                          <Text style={styles.price}>
+                            $ {item.price}
+                            <Text style={{ color: "#6C6D68" }}>/day</Text>
+                          </Text>
+                          <TouchableOpacity
+                            style={{ marginTop: 20 }}
+                            onPress={() => {
+                              navigation.navigate("Detail", { item: item });
                             }}
                           >
-                            Read More
-                          </Text>
-                        </TouchableOpacity>
+                            <Text
+                              style={{
+                                fontWeight: "700",
+                                fontSize: 14,
+                                lineHeight: 17,
+                                color: "#176FF2",
+                              }}
+                            >
+                              Read More
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  </Card>
-                </View>
-              )}
+                    </Card>
+                  </ContainerView>
+                
+              }
             />
           ) : (
             <Text>No data found...</Text>
           )}
-        </View>
-      </ScrollView>
-    </>
+        
+        </>
   );
 }
 
 export default Carousel;
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
-  child: { width, justifyContent: "center" },
   text: {
     marginTop: 12,
     fontSize: 20,
@@ -141,7 +151,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 18,
     letterSpacing: -1,
-    paddingVertical:5
+    paddingVertical: 5,
   },
   price: {
     fontSize: 16,
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   card: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#FFFF",
     borderRadius: 10,
   },
   cardBody: {
@@ -189,13 +199,13 @@ const styles = StyleSheet.create({
   heart: {
     position: "absolute",
     right: 15,
-    bottom:-20,
+    bottom: -20,
     backgroundColor: "white",
     width: 44,
     height: 44,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 44 / 2
+    borderRadius: 44 / 2,
   },
 });
