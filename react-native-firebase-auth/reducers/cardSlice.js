@@ -81,7 +81,7 @@ export const getCardsList = createAsyncThunk(
       name: "card",
       initialState,
       reducers: {
-      reset : (state) => state.initialState
+        reset: (state) => initialState,
       }, 
       extraReducers: (builder) => {
         builder
@@ -130,7 +130,6 @@ export const getCardsList = createAsyncThunk(
             state.loading = true
           })
           .addCase(updatePackage.fulfilled, (state, action) => {
-            console.log("action", action)
             state.loading = false
             state.success = true
               state.cards = state.cards.map((item) =>
@@ -143,53 +142,6 @@ export const getCardsList = createAsyncThunk(
             state.message = action.payload
           })
       },
-      // extraReducers: {
-      //   [getCardsList.pending.type]: (state) => {
-      //     state.loading = true;
-      //     state.error = '';
-      //   },
-      //   [getCardsList.rejected.type]: (state, action) => {
-      //     state.loading = false;
-      //     state.error = '';
-      //     state.cards= []
-
-      //   },
-      //   [getCardsList.fulfilled.type]: (state, action) => {
-      //     state.loading = false;
-      //     state.cards = action.payload;
-      //   },
-      //   [createPackage.pending.type] : (state) =>{
-      //     state.loading = true
-      //   },
-      //   [createPackage.fulfilled.type] : (state, action) =>{
-      //     state.loading = false
-      //     state.success= true
-      //     state.cards.push(action.payload)
-      //   },
-      //   [createPackage.rejected.type] : (state, action) =>{
-      //     state.loading = false
-      //     state.error= ''
-      //   },
-      //   [deletePackage.pending.type] : (state) =>{
-      //     state.loading = true
-      //   },
-      //   [deletePackage.fulfilled.type] : (state, action) =>{
-      //     console.log("action", action)
-      //     state.loading = false
-      //     state.success= true
-      //     // state.cards= action.payload
-      //     state.cards = state.cards.filter(
-      //       (card) =>  card._id !== action.payload.id
-            
-
-      //     )
-      //   },
-      //   [deletePackage.rejected.type] : (state, action) =>{
-      //     state.loading = false
-      //     state.error= '',
-      //     state.message= action.payload
-      //   },
-      // },
     });
 
     export const {reset} = cardSlice.actions 

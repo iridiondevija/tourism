@@ -15,9 +15,9 @@ import {
   deletePackage,
   getCardsList,
   updatePackage,
+  reset,
 } from "../reducers/cardSlice";
 
-import { Card } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import SwiperFlatList from "react-native-swiper-flatlist";
@@ -34,15 +34,20 @@ const Testing = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [singleItem, setSingleItem] = useState(null);
-  const [isLoading, setIsLoading] = useState(false)
+  //const [isLoading, setIsLoading] = useState(card.loading);
 
-  //console.log(card.cards)
+  console.log("cards", card.cards)
 
-  const onSubmit = () => {
-    dispatch(createPackage({ title, description, image }));
+  const handleReset = () => {
     setTitle("");
     setDescription("");
     setImage("");
+    setSingleItem(null);
+  };
+
+  const onSubmit = () => {
+    dispatch(createPackage({ title, description, image }));
+    handleReset();
   };
 
   const handleDelete = (id) => {
@@ -51,18 +56,20 @@ const Testing = () => {
   };
 
   const handleUpdate = (singleItem) => {
-    console.log(singleItem, "per emiljanon");
     dispatch(updatePackage(singleItem));
-    setSingleItem(null);
-    //dispatch(getCardsList());
+    handleReset();
   };
 
   useEffect(() => {
     dispatch(getCardsList());
-    setTitle("");
-    setDescription("");
-    setImage("");
+    
   }, []);
+
+
+  // useEffect(() => {
+  //   card.loading === true && dispatch(getCardsList());
+  //   return () => setIsLoading(false);
+  // }, [card.loading]);
 
   return (
     <>
@@ -79,7 +86,8 @@ const Testing = () => {
             Create
           </Text>
         </TouchableOpacity>
-        {card.loading && <Loader visible={true}>Loading...</Loader>}
+        {/* {card.loading && <Loader visible={isLoading}>Loading...</Loader>} */}
+        {card.loading && <Text>Loading..</Text>}
         {card.error && !card.loading ? <Text>{card.error}</Text> : null}
         {card.cards && card.cards.length > 0 ? (
           <FlatList
@@ -130,7 +138,8 @@ const Testing = () => {
           <View
             style={{
               paddingVertical: 10,
-              marginHorizontal: 10,
+              marginHorizontal: 40,
+              marginTop:40,
               alignItems: "center",
               backgroundColor: "gray",
             }}
@@ -173,7 +182,7 @@ const Testing = () => {
                       title: title,
                       description: description,
                       image: image,
-                      id: singleItem
+                      id: singleItem,
                     });
                 setShowModal(!showModal);
               }}
