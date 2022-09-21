@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
 
-const Package = require("../model/packageModel");
+const TripPackages = require("../model/packageModel");
 
 const getPackages = asyncHandler(async (req, res) => {
-  const package = await Package.find();
+  const package = await TripPackages.find();
   res.status(200).json(package);
 });
 
@@ -13,7 +13,7 @@ const createPackages = asyncHandler(async (req, res) => {
     throw new Error("Please add a title field");
   }
 
-  const packageCreation = await Package.create({
+  const packageCreation = await TripPackages.create({
     description: req.body.description,
     image: req.body.image,
     images: req.body.images,
@@ -27,14 +27,14 @@ const createPackages = asyncHandler(async (req, res) => {
 });
 
 const updateackages = asyncHandler(async (req, res) => {
-  const package = await Package.findById(req.params.id);
+  const package = await TripPackages.findById(req.params.id);
   console.log("second", package)
 
   if(!package){
     res.status(400)
     throw new Error('Package not found')
   }
-  const updatedPackage = await Package.findByIdAndUpdate(
+  const updatedPackage = await TripPackages.findByIdAndUpdate(
     req.params.id,
     req.body,
     { new: true }
@@ -43,7 +43,7 @@ const updateackages = asyncHandler(async (req, res) => {
 });
 
 const deletePackages = asyncHandler(async (req, res) => {
-    const package = await Package.findById(req.params.id);
+    const package = await TripPackages.findById(req.params.id);
 
   if(!package){
     res.status(400)
