@@ -10,6 +10,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - slack/notify:
+        channel: 'C043V9Z7C2V'
           custom: |
             {
               "blocks": [
