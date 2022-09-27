@@ -130,7 +130,7 @@ const Users = () => {
               backgroundColor: "red",
             },
           ]}
-          onPress={() => navigation.navigate("Testing")}
+          onPress={() => navigation.navigate("Login")}
         >
           <Text style={styles.singleModalButtonText}>Testing</Text>
         </TouchableOpacity>

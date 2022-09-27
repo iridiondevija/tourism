@@ -3,8 +3,8 @@ import { Platform } from "react-native";
 
 const API_URL =
   Platform.OS === "ios"
-    ? "http://localhost:8080/api/packages/"
-    : "http://10.0.2.2:8080/api/packages/";
+    ? "http://192.168.88.25:8080/api/TripPackages/"
+    : "http://192.168.88.25:8080/api/TripPackages/";
 
   //   const API_URL_ID =
   // Platform.OS === "ios"
@@ -12,7 +12,22 @@ const API_URL =
   //   : "http://10.0.2.2:5000/api/packages/";
 
 const getCards = async () => {
+  
   const response = await axios.get(API_URL);
+
+  return response.data;
+};
+
+const getCardDetail = async (cardId) => {
+
+  const response = await axios.get(API_URL + cardId);
+
+  return response.data;
+};
+
+const getCardDetailDates = async (cardId) => {
+
+  const response = await axios.get(`${API_URL}${cardId}/dates`);
 
   return response.data;
 };
@@ -38,6 +53,8 @@ const cardService = {
   getCards,
   createPackage,
   deletePack,
-  updatePack
+  updatePack,
+  getCardDetail,
+  getCardDetailDates
 };
 export default cardService;

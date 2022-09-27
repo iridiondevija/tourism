@@ -5,11 +5,11 @@ const packageSchema = mongoose.Schema({
         type: String,
         required: [false, 'Please add an card description']
     },
-    image:{
+    defaultImage:{
         type: String,
         required: [false, 'Please add an image url']
     },
-    images:{
+    carouselImages:{
         type: Array,
         required: [false, 'Please add some images url']
     },
@@ -32,7 +32,11 @@ const packageSchema = mongoose.Schema({
     duration:{
         type:String,
         required: [false, 'Please add the location']
+    },
+    availabilityPeriod:{
+        type:Array,
+        required: [false, 'Please add the location']
     }
-})
+},{timestamps: true})
 
-module.exports= mongoose.model("package", packageSchema)
+module.exports= mongoose.model("tripPackages", packageSchema)

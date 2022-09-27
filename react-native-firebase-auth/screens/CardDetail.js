@@ -14,25 +14,33 @@ import { Card } from "react-native-paper";
 import Favourite from "../components/Favourite";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ContainerView from "../container/ContainerView";
+import cardService from "../services/cardsServices";
 
 const { width, height } = Dimensions.get("window");
 const NUM_OF_LINES = 4;
 
-function CardDetail({ route, navigation }) {
-  const { item } = route.params;
+function CardDetail({route, navigation}) {
+  const { singleCardId , item} = route.params;
 
-  const {
-    price,
-    title,
-    description,
-    images,
-    rating,
-    duration,
-  } = item;
   const [expanded, setExpanded] = useState(false);
   const animationHeight = useRef(new Animated.Value(2)).current;
   const [numOfLines, setNumOfLines] = useState(NUM_OF_LINES);
   const [hasMore, setHasMore] = useState(false);
+  const [cardDetail, setCardDetail] = useState([]);
+
+  const {carouselImages, duration,title, rating, description, price, location} = cardDetail;
+
+  const loadData = async (id) => {
+    const response = await cardService.getCardDetail(id);
+    setCardDetail(response);
+  };
+
+  useEffect(() => {
+    (!!singleCardId === true) && loadData(singleCardId);
+  }, [singleCardId]);
+
+
+  console.log('cardDetail', cardDetail)
   const onTextLayout = useCallback((e) => {
     setHasMore(e.nativeEvent.lines.length > NUM_OF_LINES);
     setNumOfLines(e.nativeEvent.lines.length);
@@ -41,8 +49,6 @@ function CardDetail({ route, navigation }) {
   const toggleExpansion = () => {
     setExpanded(!expanded);
   };
-
-  console.log("pero", item)
 
   useEffect(() => {
     if (expanded) {
@@ -75,7 +81,7 @@ function CardDetail({ route, navigation }) {
                 horizontal={true}
                 // scrollEnabled={true}
                 showPagination
-                data={images}
+                data={carouselImages}
                 renderItem={({ item }) => (
                   <Card.Cover
                     style={styles.cardCover}
@@ -92,11 +98,11 @@ function CardDetail({ route, navigation }) {
                 <Icon color="#B8B8B8" name="chevron-left" size={30} />
               </TouchableOpacity>
               <View style={styles.heart}>
-                <Favourite />
+                <Favourite item = {item}/>
               </View>
             </View>
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{title}</Text>
+              <Text style={styles.cardTitle}>{title}, {location}</Text>
             </View>
             <View style={styles.cardReview}>
               <Text style={styles.cardReviewText}>Overview</Text>
@@ -185,7 +191,7 @@ function CardDetail({ route, navigation }) {
               <TouchableOpacity
                 style={styles.cardPrenotationContentPriceButton}
                 onPress={() => {
-                  navigation.navigate("Availabilty", { item: item });
+                  navigation.navigate("Availabilty", { singleCardId });
                 }}
               >
                 <View style={styles.cardBookButton}>

@@ -9,11 +9,12 @@ import CardDetail from "./screens/CardDetail";
 import Carousel from "./screens/Carousel";
 
 import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
+//import LoginScreen from "./screens/LoginScreen";
 import Testing from "./screens/Testing";
 import Users from "./screens/Users";
 import cardReducer from './reducers/cardSlice';
 import AvailabilityCard from "./screens/AvailabilityCard";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -30,11 +31,11 @@ export default function App() {
     <Provider store = { store }>
  <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           options={{ headerShown: false }}
-          name="Login"
+          name="Loginscreen"
           component={LoginScreen}
-        />
+        /> */}
         <Stack.Screen
           options={{ headerShown: false }}
           name="Home"

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const {erroHandler} = require('./middleware/errorMiddleware')
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 const {connectDb} = require('./config/mongo')
 
 app.use(express.json());
@@ -16,7 +16,10 @@ connectDb();
 //   credential: admin.credential.cert(credentials),
 // });
 
-app.use("/api/packages", require("./routes/packageRoute"));
+app.use("/api/TripPackages", require("./routes/packageRoute"));
+// app.use("/api/agents", require("./routes/agentRoute"));
+
+app.use("/api/users", require("./routes/userRoute"));
 app.use(erroHandler)
 
 app.listen(PORT, () => {

@@ -39,6 +39,8 @@ function Carousel() {
   // };
 
 
+    console.log('card', card)
+
   useEffect(() => {
     //loadData();
     dispatch(getCardsList());
@@ -64,18 +66,18 @@ function Carousel() {
                       mode="contained"
                       style={[styles.cardContent, styles.card]}
                       onPress={() => {
-                        navigation.navigate("Detail", { item: item });
+                        navigation.navigate("Detail", { singleCardId: item._id});
                       }}
                     >
                       <View style={{ position: "relative" }}>
                         <Card.Cover
                           style={styles.cardImage}
                           source={{
-                            uri: item.image,
+                            uri: item.defaultImage,
                           }}
                         />
                         <View style={styles.heart}>
-                          <Favourite />
+                          <Favourite item={item}/>
                         </View>
                       </View>
                       <View style={styles.cardBody}>
@@ -106,7 +108,7 @@ function Carousel() {
                           <TouchableOpacity
                             style={{ marginTop: 20 }}
                             onPress={() => {
-                              navigation.navigate("Detail", { item: item });
+                              navigation.navigate("Detail", { singleCardId: item._id });
                             }}
                           >
                             <Text

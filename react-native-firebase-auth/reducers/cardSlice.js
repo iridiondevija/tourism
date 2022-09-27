@@ -5,7 +5,8 @@ const initialState = {
   loading: false,
   error: false,
   success: false,
-  cards:{}
+  cards:{},
+  message: ''
 
 }
 
@@ -63,7 +64,6 @@ export const getCardsList = createAsyncThunk(
       'pack/update',
       async (goalData) => {
         try {
-          console.log("goal", goalData)
           return await cardService.updatePack(goalData)
         } catch (error) {
           const message =
@@ -81,9 +81,9 @@ export const getCardsList = createAsyncThunk(
       name: "card",
       initialState,
       reducers: {
-        reset: (state) => initialState,
+        //reset: (state) => initialState,
       }, 
-      extraReducers: (builder) => {
+        extraReducers:  (builder) => {
         builder
           .addCase(createPackage.pending, (state) => {
             state.loading = false

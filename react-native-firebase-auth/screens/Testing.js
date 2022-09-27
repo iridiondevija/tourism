@@ -15,14 +15,11 @@ import {
   deletePackage,
   getCardsList,
   updatePackage,
-  reset,
 } from "../reducers/cardSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import SwiperFlatList from "react-native-swiper-flatlist";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { ContainerView } from "../container/ContainerView";
 import Loader from "./Loader";
 
 const Testing = () => {
@@ -34,9 +31,7 @@ const Testing = () => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [singleItem, setSingleItem] = useState(null);
-  //const [isLoading, setIsLoading] = useState(card.loading);
-
-  console.log("cards", card.cards)
+  const [isLoading, setIsLoading] = useState(card.loading);
 
   const handleReset = () => {
     setTitle("");
@@ -62,14 +57,14 @@ const Testing = () => {
 
   useEffect(() => {
     dispatch(getCardsList());
-    
   }, []);
 
-
-  // useEffect(() => {
-  //   card.loading === true && dispatch(getCardsList());
-  //   return () => setIsLoading(false);
-  // }, [card.loading]);
+  console.log("card", card.cards)
+  
+  useEffect(() => {
+    card.loading === true && dispatch(getCardsList());
+    return () => setIsLoading(true);
+  }, [card.loading]);
 
   return (
     <>
@@ -85,9 +80,9 @@ const Testing = () => {
           >
             Create
           </Text>
-        </TouchableOpacity>
-        {/* {card.loading && <Loader visible={isLoading}>Loading...</Loader>} */}
-        {card.loading && <Text>Loading..</Text>}
+        </TouchableOpacity>     
+        {card.loading && <Loader visible={!isLoading}/>}   
+        {/* {card.loading && <Text>Loading..</Text>} */}
         {card.error && !card.loading ? <Text>{card.error}</Text> : null}
         {card.cards && card.cards.length > 0 ? (
           <FlatList
